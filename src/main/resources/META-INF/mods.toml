@@ -1,0 +1,27 @@
+modLoader="javafml"
+loaderVersion="[39,)"
+license="DBAD v1.1"
+#logoFile="hitchhike.png"
+
+[[mods]]
+modId="hitchhike"
+version="${file.jarVersion}"
+displayName="Hitchhike"
+displayURL="https://github.com/Lucid-Lucie/Hitchhike"
+credits="Thanks for everything Otto!"
+authors="Lucie"
+description="Capture horses!"
+
+[[dependencies.hitchhike]]
+    modId="forge"
+    mandatory=true
+    versionRange="[39,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.hitchhike]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.18.1,1.19)"
+    ordering="NONE"
+    side="BOTH"
