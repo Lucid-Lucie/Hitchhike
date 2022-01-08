@@ -1,0 +1,36 @@
+{
+  "credit": "Modeled in Blockbench by Lucie",
+  "gui_light": "front",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [69, 45, 0],
+      "translation": [0, 3.75, 2]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [69, 45, 0],
+      "translation": [0, 3.75, 2]
+    },
+    "firstperson_righthand": {
+      "translation": [0, 4.5, 0]
+    },
+    "firstperson_lefthand": {
+      "translation": [0, 4.5, 0]
+    },
+    "ground": {
+      "translation": [0, 3.75, 0],
+      "scale": [0.8, 0.8, 0.8]
+    },
+    "gui": {
+      "rotation": [23, -135, 0],
+      "translation": [0, 3.5, 0],
+      "scale": [1.2, 1.2, 1.2]
+    },
+    "head": {
+      "rotation": [0, 30, 0],
+      "translation": [0, 13, 0]
+    },
+    "fixed": {
+      "translation": [0, 0, -1]
+    }
+  }
+}

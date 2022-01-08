@@ -1,3 +1,9 @@
 {
-  "item.hitchhike.gilded_wheat": "Gilded Wheat"
+  "item.hitchhike.gilded_wheat": "Gilded Wheat",
+  "item.hitchhike.pouch.empty": "Empty Pouch",
+  "item.hitchhike.pouch.captured": "Captured Horse",
+
+  "tooltip.hitchhike.food": "Food",
+
+  "status.hitchhike.storage_full": "The pouch is full."
 }

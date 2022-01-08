@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LWL",
+    " L "
+  ],
+  "key": {
+    "W": {
+      "item": "hitchhike:gilded_wheat"
+    },
+    "L": {
+      "item": "minecraft:leather"
+    }
+  },
+  "result": {
+    "item": "hitchhike:pouch"
+  }
+}
