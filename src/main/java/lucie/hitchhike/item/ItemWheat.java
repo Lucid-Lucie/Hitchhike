@@ -70,7 +70,6 @@ public class ItemWheat extends Item
     @Override
     public void onUseTick(@Nonnull Level level, @Nonnull LivingEntity entity, @Nonnull ItemStack stack, int tick)
     {
-        System.out.println("Tick! " + tick);
         if (tick%16 == 15)
         {
             if (level.isClientSide)
@@ -150,8 +149,6 @@ public class ItemWheat extends Item
                     // Particles
                     UtilParticle.spawnBreakParticles(stack, entity, new Random(), 10);
                 }
-
-
             }
         }
 

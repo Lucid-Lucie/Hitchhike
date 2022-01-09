@@ -1,6 +1,5 @@
 package lucie.hitchhike.util;
 
-import com.mojang.math.Vector3d;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
@@ -34,6 +33,25 @@ public class UtilParticle
             else
             {
                 entity.level.addParticle(new ItemParticleOption(ParticleTypes.ITEM, stack), vec31.x, vec31.y, vec31.z, vec3.x, vec3.y + 0.05D, vec3.z);
+            }
+        }
+    }
+
+    public static void spawnFailParticles(Random random, LivingEntity entity)
+    {
+        for(int i = 0; i < 15; ++i)
+        {
+            double x = random.nextGaussian() * 0.02D;
+            double y = random.nextGaussian() * 0.02D;
+            double z = random.nextGaussian() * 0.02D;
+
+            if (entity.level instanceof ServerLevel)
+            {
+                ((ServerLevel)entity.level).sendParticles(ParticleTypes.SMOKE, entity.getRandomX(1.0D), entity.getRandomY() + 0.2, entity.getRandomZ(1.0D), 1, x, y, z, 0.0F);
+            }
+            else
+            {
+                entity.level.addParticle(ParticleTypes.SMOKE, entity.getRandomX(1.0D), entity.getRandomY()  + 0.2, entity.getRandomZ(1.0D), x, y, z);
             }
         }
     }
