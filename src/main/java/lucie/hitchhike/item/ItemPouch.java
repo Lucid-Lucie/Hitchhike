@@ -1,6 +1,7 @@
 package lucie.hitchhike.item;
 
 import lucie.hitchhike.Hitchhike;
+import lucie.hitchhike.effect.InitEffects;
 import lucie.hitchhike.util.UtilParticle;
 import lucie.hitchhike.util.UtilText;
 import net.minecraft.ChatFormatting;
@@ -13,6 +14,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
@@ -74,7 +76,7 @@ public class ItemPouch extends Item
         if (stack.getTag() == null || stack.getTag().contains("data") || !HORSES.contains(entity.getType())) return InteractionResult.FAIL;
 
         // Pouch has to have food.
-        if (getFood(stack) < 1)
+        if (getFood(stack) < 1 && !entity.hasEffect(InitEffects.WELL_FED))
         {
             if (player.level.isClientSide)
             {
@@ -163,11 +165,20 @@ public class ItemPouch extends Item
         if (entity.level.isClientSide)
         {
             player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
-            UtilParticle.spawnBreakParticles(new ItemStack(InitItems.GILDED_WHEAT), player, player.getRandom(), 10);
+
+            // Well fed effect removes needing to eat.
+            if (!entity.hasEffect(InitEffects.WELL_FED)) UtilParticle.spawnBreakParticles(new ItemStack(InitItems.GILDED_WHEAT), player, player.getRandom(), 10);
         }
         else
         {
-            setFood(stack, -1);
+            // Well fed effect removes needing to eat.
+            if (!entity.hasEffect(InitEffects.WELL_FED))
+            {
+                setFood(stack, -1);
+
+                // Give effect after eating.
+                entity.addEffect(new MobEffectInstance(InitEffects.WELL_FED, 3600));
+            }
         }
 
         // Save entity data onto compound.
@@ -220,15 +231,16 @@ public class ItemPouch extends Item
         entity.setYRot(player.getYRot());
         entity.setXRot(player.getXRot());
 
+
+        // Spawn entity.
+        level.addFreshEntity(entity);
+
         // Clear data.
         stack.getOrCreateTag().remove("data");
         stack.getOrCreateTag().remove("entity");
 
         // Set new stack.
         player.setItemInHand(hand, stack);
-
-        // Spawn entity.
-        level.addFreshEntity(entity);
 
         return InteractionResult.SUCCESS;
     }

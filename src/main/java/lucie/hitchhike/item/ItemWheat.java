@@ -1,5 +1,6 @@
 package lucie.hitchhike.item;
 
+import lucie.hitchhike.effect.InitEffects;
 import lucie.hitchhike.util.UtilParticle;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.TextComponent;
@@ -44,10 +45,11 @@ public class ItemWheat extends Item
                     animal.setInLove(player);
                     stack.shrink(1);
 
-                    // Add 6s generation as bonus.
+                    // Add 6s generation and well fed as bonus.
                     if (!animal.hasEffect(MobEffects.REGENERATION))
                     {
-                        animal.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0));
+                        if (!animal.hasEffect(MobEffects.REGENERATION)) animal.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 120, 0, false, false));
+                        if (!animal.hasEffect(InitEffects.WELL_FED)) animal.addEffect(new MobEffectInstance(InitEffects.WELL_FED, 3600, 0));
                     }
 
                     return InteractionResult.SUCCESS;

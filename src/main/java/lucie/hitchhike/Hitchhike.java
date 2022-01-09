@@ -1,10 +1,12 @@
 package lucie.hitchhike;
 
+import lucie.hitchhike.effect.EffectWellFed;
 import lucie.hitchhike.item.InitItems;
 import lucie.hitchhike.item.ItemPouch;
 import lucie.hitchhike.item.ItemWheat;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -33,6 +35,12 @@ public class Hitchhike
     @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class RegistryEvents
     {
+        @SubscribeEvent
+        public static void registerEffects(RegistryEvent.Register<MobEffect> event)
+        {
+            event.getRegistry().register(new EffectWellFed());
+        }
+
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
