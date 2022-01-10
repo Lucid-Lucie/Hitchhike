@@ -1,0 +1,7 @@
+{
+  "credit": "Modeled in Blockbench by Lucie",
+  "parent": "hitchhike:item/template_pouch_horse",
+  "textures": {
+    "horse": "hitchhike:item/pouch/horse/horse_brown"
+  }
+}

@@ -80,7 +80,16 @@
     }
   ],
   "overrides": [
-    { "predicate": { "hitchhike:model": 0.0 }, "model": "hitchhike:item/pouch" },
-    { "predicate": { "hitchhike:model": 0.1 }, "model": "hitchhike:item/pouch_food" }
+    { "predicate": { "hitchhike:model": 0.0000000 }, "model": "hitchhike:item/pouch" },
+    { "predicate": { "hitchhike:model": 0.0000001 }, "model": "hitchhike:item/pouch_food" },
+    { "predicate": { "hitchhike:model": 0.0000002 }, "model": "hitchhike:item/pouch_horse_skeleton" },
+    { "predicate": { "hitchhike:model": 0.0000003 }, "model": "hitchhike:item/pouch_horse_zombie" },
+    { "predicate": { "hitchhike:model": 0.0000004 }, "model": "hitchhike:item/pouch_horse_white" },
+    { "predicate": { "hitchhike:model": 0.0000005 }, "model": "hitchhike:item/pouch_horse_creamy" },
+    { "predicate": { "hitchhike:model": 0.0000006 }, "model": "hitchhike:item/pouch_horse_chestnut" },
+    { "predicate": { "hitchhike:model": 0.0000007 }, "model": "hitchhike:item/pouch_horse_brown" },
+    { "predicate": { "hitchhike:model": 0.0000008 }, "model": "hitchhike:item/pouch_horse_black" },
+    { "predicate": { "hitchhike:model": 0.0000009 }, "model": "hitchhike:item/pouch_horse_gray" },
+    { "predicate": { "hitchhike:model": 0.0000010 }, "model": "hitchhike:item/pouch_horse_darkbrown" }
   ]
 }

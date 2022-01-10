@@ -18,6 +18,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
+import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.Nullable;
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ItemPouch extends Item
 {
@@ -53,6 +55,11 @@ public class ItemPouch extends Item
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag)
     {
         tooltip.add(UtilText.colorText(new String[]{I18n.get("tooltip.hitchhike.food") + ": ", String.valueOf(getFood(stack)), "/", String.valueOf(STORAGE)}, new ChatFormatting[]{ChatFormatting.GRAY, ChatFormatting.WHITE, ChatFormatting.GRAY, ChatFormatting.WHITE}));
+        if (stack.getOrCreateTag().contains("data"))
+        {
+            System.out.println(stack.getTag().getCompound("data").getInt("Variant"));
+            tooltip.add(new TextComponent(stack.getTag().getAllKeys().toString()));
+        }
     }
 
     @Override
@@ -121,7 +128,31 @@ public class ItemPouch extends Item
 
     public static float getTexture(ItemStack stack)
     {
-        return getFood(stack) == 0 ? 0.0F : 0.1F;
+        if (stack.getTag() == null) return 0.0000000F;
+
+        if (stack.getTag().contains("data"))
+        {
+            if (stack.getTag().getString("entity").equals(Objects.requireNonNull(EntityType.SKELETON_HORSE.getRegistryName()).toString()))
+            {
+                return 0.0000002F;
+            }
+
+            if (stack.getTag().getString("entity").equals(Objects.requireNonNull(EntityType.ZOMBIE_HORSE.getRegistryName()).toString()))
+            {
+                return 0.0000003F;
+            }
+
+            // Check and apply for horse variant.
+            if (stack.getTag().getString("entity").equals(Objects.requireNonNull(EntityType.HORSE.getRegistryName()).toString()))
+            {
+
+                int id = (stack.getTag().getCompound("data").getInt("Variant")%8) + 4;
+
+                return id >= 10 ? Float.parseFloat("0.00000" + id) : Float.parseFloat("0.000000" + id);
+            }
+        }
+
+        return getFood(stack) == 0 ? 0.0F : 0.0000001F;
     }
 
     /* Compound data - Food */
