@@ -11,6 +11,17 @@ import java.util.Random;
 
 public class UtilParticle
 {
+    public static void spawnPoofParticles(LivingEntity entity, Random random)
+    {
+        for(int i = 0; i < 20; ++i)
+        {
+            double d0 = random.nextGaussian() * 0.02D;
+            double d1 = random.nextGaussian() * 0.02D;
+            double d2 = random.nextGaussian() * 0.02D;
+            entity.level.addParticle(ParticleTypes.POOF, entity.getRandomX(1.0D), entity.getRandomY(), entity.getRandomZ(1.0D), d0, d1, d2);
+        }
+    }
+
     public static void spawnBreakParticles(ItemStack stack, LivingEntity entity, Random random, int count)
     {
         for(int i = 0; i < count; ++i)

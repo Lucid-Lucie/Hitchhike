@@ -105,7 +105,7 @@ public class ItemWheat extends Item
                 // Give status message on full storage.
                 if (level.isClientSide)
                 {
-                    player.displayClientMessage(new TextComponent(I18n.get("status.hitchhike.storage_full")), true);
+                    player.displayClientMessage(new TextComponent(I18n.get("status.hitchhike.pouch_full")), true);
                 }
 
                 return new InteractionResultHolder<>(InteractionResult.CONSUME_PARTIAL, player.getItemInHand(hand));

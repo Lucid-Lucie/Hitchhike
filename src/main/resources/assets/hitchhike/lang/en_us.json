@@ -6,7 +6,11 @@
   "effect.hitchhike.well_fed": "Well Fed",
 
   "tooltip.hitchhike.food": "Food",
+  "tooltip.hitchhike.info": "Information",
+  "tooltip.hitchhike.health": "Max Health",
+  "tooltip.hitchhike.speed": "Movement Speed",
+  "tooltip.hitchhike.jump": "Jump Height",
 
-  "status.hitchhike.storage_full": "The pouch is full.",
-  "status.hitchhike.no_food": "No food in pouch."
+  "status.hitchhike.pouch_full": "The pouch is full of food",
+  "status.hitchhike.pouch_empty": "There's no food in the pouch"
 }

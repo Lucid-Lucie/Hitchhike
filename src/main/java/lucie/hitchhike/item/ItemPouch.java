@@ -5,25 +5,24 @@ import lucie.hitchhike.effect.InitEffects;
 import lucie.hitchhike.util.UtilParticle;
 import lucie.hitchhike.util.UtilText;
 import net.minecraft.ChatFormatting;
+import net.minecraft.Util;
 import net.minecraft.client.resources.language.I18n;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-import net.minecraft.world.entity.animal.horse.Variant;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Rarity;
-import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.*;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -45,7 +44,7 @@ public class ItemPouch extends Item
 
     public ItemPouch()
     {
-        super(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1));
+        super(new Item.Properties().rarity(Rarity.UNCOMMON).stacksTo(1).tab(CreativeModeTab.TAB_TRANSPORTATION));
         this.setRegistryName("pouch");
     }
 
@@ -54,18 +53,49 @@ public class ItemPouch extends Item
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag)
     {
+        // Display amount of food.
         tooltip.add(UtilText.colorText(new String[]{I18n.get("tooltip.hitchhike.food") + ": ", String.valueOf(getFood(stack)), "/", String.valueOf(STORAGE)}, new ChatFormatting[]{ChatFormatting.GRAY, ChatFormatting.WHITE, ChatFormatting.GRAY, ChatFormatting.WHITE}));
-        if (stack.getOrCreateTag().contains("data"))
+
+        // Only display info if it actually has info.
+        if (stack.getTag() == null || !stack.getTag().contains("info")) return;
+
+        // Add information title.
+        tooltip.add(new TextComponent(""));
+        tooltip.add(UtilText.colorText(new String[]{I18n.get("tooltip.hitchhike.info") + ": "}, new ChatFormatting[]{stack.getRarity().color}));
+
+        // Add speed information.
+        if (stack.getTag().getCompound("info").getInt("speed") != 0)
         {
-            System.out.println(stack.getTag().getCompound("data").getInt("Variant"));
-            tooltip.add(new TextComponent(stack.getTag().getAllKeys().toString()));
+            String s = stack.getTag().getCompound("info").getInt("speed") > 0 ? "+" : "";
+            tooltip.add(UtilText.colorText(new String[]{s + stack.getTag().getCompound("info").getInt("speed") + "% ", I18n.get("tooltip.hitchhike.speed")}, new ChatFormatting[]{ChatFormatting.WHITE, ChatFormatting.GRAY}));
         }
+
+        // Add jump information.
+        if (stack.getTag().getCompound("info").getInt("jump") != 0)
+        {
+            String s = stack.getTag().getCompound("info").getInt("jump") > 0 ? "+" : "";
+            tooltip.add(UtilText.colorText(new String[]{s + stack.getTag().getCompound("info").getInt("jump") + "% ", I18n.get("tooltip.hitchhike.jump")}, new ChatFormatting[]{ChatFormatting.WHITE, ChatFormatting.GRAY}));
+        }
+
+        // Add health information.
+        tooltip.add(UtilText.colorText(new String[]{stack.getTag().getCompound("info").getInt("health") + " ", I18n.get("tooltip.hitchhike.health")}, new ChatFormatting[]{ChatFormatting.WHITE, ChatFormatting.GRAY}));
     }
 
     @Override
     @Nonnull
     public String getDescriptionId(@Nonnull ItemStack stack)
     {
+        // Check custom name.
+        if (stack.getTag() != null && stack.getTag().contains("data") && stack.getTag().getCompound("data").contains("CustomName"))
+        {
+            // Convert custom name.
+            Component component = Component.Serializer.fromJson(stack.getTag().getCompound("data").getString("CustomName"));
+
+            // If converted, add it.
+            if (component != null) return component.getString();
+        }
+
+        // Empty pouch or captured horse.
         return stack.getTag() == null || !stack.getTag().contains("data") ? I18n.get("item.hitchhike.pouch.empty") : I18n.get("item.hitchhike.pouch.captured");
     }
 
@@ -88,7 +118,7 @@ public class ItemPouch extends Item
             if (player.level.isClientSide)
             {
                 // Display no food message & spawn particles.
-                player.displayClientMessage(new TextComponent(I18n.get("status.hitchhike.no_food")), true);
+                player.displayClientMessage(new TextComponent(I18n.get("status.hitchhike.pouch_empty")), true);
                 UtilParticle.spawnFailParticles(player.getRandom(), entity);
             }
             else
@@ -116,12 +146,12 @@ public class ItemPouch extends Item
         if (context.getPlayer() != null && context.getPlayer().getCooldowns().isOnCooldown(context.getItemInHand().getItem())) return InteractionResult.FAIL;
 
         // Check for data.
-        if (!context.getItemInHand().getOrCreateTag().contains("data") || !(context.getLevel() instanceof ServerLevel)) return InteractionResult.FAIL;
+        if (!context.getItemInHand().getOrCreateTag().contains("data")) return InteractionResult.FAIL;
 
         // Set cooldown on pouch.
         if (context.getPlayer() != null) context.getPlayer().getCooldowns().addCooldown(context.getItemInHand().getItem(), 20);
 
-        return readData(context.getItemInHand(), (ServerLevel) context.getLevel(), context.getClickLocation(), context.getPlayer(), context.getHand());
+        return readData(context.getItemInHand(), context.getLevel(), context.getClickLocation(), context.getPlayer(), context.getHand());
     }
 
     /* Texture */
@@ -195,7 +225,11 @@ public class ItemPouch extends Item
         // Shrink food.
         if (entity.level.isClientSide)
         {
+            // Sound
             player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
+
+            // Poof
+            UtilParticle.spawnPoofParticles(entity, entity.getRandom());
 
             // Well fed effect removes needing to eat.
             if (!entity.hasEffect(InitEffects.WELL_FED)) UtilParticle.spawnBreakParticles(new ItemStack(InitItems.GILDED_WHEAT), player, player.getRandom(), 10);
@@ -216,10 +250,18 @@ public class ItemPouch extends Item
         CompoundTag data = new CompoundTag();
         entity.save(data);
 
+        // Info compound for tooltip.
+        CompoundTag info = new CompoundTag();
+        info.putInt("health", (int) entity.getMaxHealth());
+        info.putInt("jump", (int) Math.ceil(((entity.getAttribute(Attributes.JUMP_STRENGTH).getValue() - 0.7) / 2.0) * 100));
+        info.putInt("speed", (int) Math.ceil(((entity.getAttribute(Attributes.MOVEMENT_SPEED).getValue() - 0.1125) / 0.3375) * 100));
+
+
         // Merge compound with item.
         CompoundTag item = stack.getOrCreateTag();
         item.putString("entity", entity.getType().getRegistryName().toString());
         item.put("data", data);
+        item.put("info", info);
 
         // Data might not get set without this.
         player.setItemInHand(hand, stack);
@@ -230,7 +272,7 @@ public class ItemPouch extends Item
         return InteractionResult.SUCCESS;
     }
 
-    public static InteractionResult readData(ItemStack stack, ServerLevel level, Vec3 pos, Player player, InteractionHand hand)
+    public static InteractionResult readData(ItemStack stack, Level level, Vec3 pos, Player player, InteractionHand hand)
     {
         // Get type from "entity" tag.
         EntityType<?> type = ForgeRegistries.ENTITIES.getValue(new ResourceLocation(stack.getOrCreateTag().getString("entity")));
@@ -262,6 +304,20 @@ public class ItemPouch extends Item
         entity.setYRot(player.getYRot());
         entity.setXRot(player.getXRot());
 
+        // Check and set custom name
+        if (stack.getOrCreateTag().getCompound("data").contains("CustomName"))
+        {
+            Component component = Component.Serializer.fromJson(stack.getOrCreateTag().getCompound("data").getString("CustomName"));
+
+            if (component != null)
+            {
+                entity.setCustomName(component);
+            }
+            else
+            {
+                Hitchhike.LOGGER.error("Couldn't serialize '{}' to component. Custom name won't be added!", stack.getOrCreateTag().getCompound("data").getString("CustomName"));
+            }
+        }
 
         // Spawn entity.
         level.addFreshEntity(entity);
@@ -269,9 +325,20 @@ public class ItemPouch extends Item
         // Clear data.
         stack.getOrCreateTag().remove("data");
         stack.getOrCreateTag().remove("entity");
+        stack.getOrCreateTag().remove("info");
 
         // Set new stack.
         player.setItemInHand(hand, stack);
+        
+        // Sound and particles
+        if (level.isClientSide)
+        {
+            // Sound
+            player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
+
+            // Poof
+            UtilParticle.spawnPoofParticles(entity, entity.getRandom());
+        }
 
         return InteractionResult.SUCCESS;
     }
