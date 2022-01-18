@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="[39,)"
 license="DBAD v1.1"
-#logoFile="hitchhike.png"
+logoFile="hitchhike.png"
 
 [[mods]]
 modId="hitchhike"
