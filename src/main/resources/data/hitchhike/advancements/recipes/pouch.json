@@ -6,13 +6,13 @@
     ]
   },
   "criteria": {
-    "has_gilded_wheat": {
+    "has_leather": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "hitchhike:gilded_wheat"
+              "minecraft:leather"
             ]
           }
         ]
@@ -27,7 +27,7 @@
   },
   "requirements": [
     [
-      "has_gilded_wheat",
+      "has_leather",
       "has_the_recipe"
     ]
   ]

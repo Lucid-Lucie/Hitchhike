@@ -1,14 +1,15 @@
 package lucie.hitchhike.item;
 
+import lucie.hitchhike.Hitchhike;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.ObjectHolder;
 
-@ObjectHolder("hitchhike")
-public class InitItems
+@ObjectHolder(Hitchhike.MODID)
+public class ItemAlias
 {
-    @ObjectHolder("gilded_wheat")
-    public static Item GILDED_WHEAT;
-
     @ObjectHolder("pouch")
     public static Item POUCH;
+
+    @ObjectHolder("pouch_with_horse")
+    public static Item POUCH_WITH_HORSE;
 }

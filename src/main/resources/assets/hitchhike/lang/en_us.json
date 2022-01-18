@@ -1,16 +1,10 @@
 {
-  "item.hitchhike.gilded_wheat": "Gilded Wheat",
-  "item.hitchhike.pouch.empty": "Empty Pouch",
-  "item.hitchhike.pouch.captured": "Captured Horse",
+  "item.hitchhike.pouch": "Empty Pouch",
+  "item.hitchhike.pouch_with_horse": "Captured Horse",
 
-  "effect.hitchhike.well_fed": "Well Fed",
-
-  "tooltip.hitchhike.food": "Food",
-  "tooltip.hitchhike.info": "Information",
-  "tooltip.hitchhike.health": "Max Health",
-  "tooltip.hitchhike.speed": "Movement Speed",
-  "tooltip.hitchhike.jump": "Jump Height",
-
-  "status.hitchhike.pouch_full": "The pouch is full of food",
-  "status.hitchhike.pouch_empty": "There's no food in the pouch"
+  "tooltip.hitchhike.information.health": "Health: %s/%s",
+  "tooltip.hitchhike.information": "Information",
+  "tooltip.hitchhike.health": "Health Points",
+  "tooltip.hitchhike.jump": "Jump Strength",
+  "tooltip.hitchhike.speed": "Movement Speed"
 }

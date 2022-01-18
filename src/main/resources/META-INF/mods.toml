@@ -5,7 +5,7 @@ license="DBAD v1.1"
 
 [[mods]]
 modId="hitchhike"
-version="${file.jarVersion}"
+version="1.1"
 displayName="Hitchhike"
 displayURL="https://github.com/Lucid-Lucie/Hitchhike"
 credits="Thanks for everything Otto!"

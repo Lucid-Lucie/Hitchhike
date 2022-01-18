@@ -1,13 +1,11 @@
 {
   "type": "minecraft:crafting_shaped",
   "pattern": [
-    "LWL",
+    "L L",
     " L "
   ],
-  "key": {
-    "W": {
-      "item": "hitchhike:gilded_wheat"
-    },
+  "key":
+  {
     "L": {
       "item": "minecraft:leather"
     }
