@@ -1,14 +1,7 @@
 package lucie.hitchhike.item;
 
 import lucie.hitchhike.Hitchhike;
-import lucie.hitchhike.util.UtilAttributes;
-import lucie.hitchhike.util.UtilAttributes.Value;
 import lucie.hitchhike.util.UtilPouch;
-import net.minecraft.ChatFormatting;
-import net.minecraft.client.resources.language.I18n;
-import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Style;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -16,14 +9,10 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Objects;
 
 public class ItemHorse extends Item
@@ -50,58 +39,6 @@ public class ItemHorse extends Item
 
         // Return error model.
         return 0.0000000F;
-    }
-
-    /* Information */
-
-    @Override
-    public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag)
-    {
-        super.appendHoverText(stack, level, tooltip, flag);
-
-        // This means the item has been spawned in without data.
-        if (stack.getTag() == null || !stack.getTag().contains("Content"))
-        {
-            TextComponent component = new TextComponent("No Data");
-            component.setStyle(Style.EMPTY.applyFormat(ChatFormatting.GRAY));
-            tooltip.add(component);
-            return;
-        }
-
-        // Get needed attribute data.
-        UtilAttributes attributes = UtilAttributes.generate(stack.getTag().getCompound("Content").getList("Attributes", 10));
-
-        // Health
-        TextComponent health = new TextComponent(I18n.get("tooltip.hitchhike.information.health", stack.getTag().getCompound("Content").getInt("Health"), attributes.getIntHealth()));
-        health.setStyle(Style.EMPTY.applyFormat(ChatFormatting.GRAY));
-        tooltip.add(health);
-
-        // Divider
-        tooltip.add(TextComponent.EMPTY);
-
-        // Information
-        TextComponent information = new TextComponent(I18n.get("tooltip.hitchhike.information") + ":");
-        information.setStyle(Style.EMPTY.applyFormat(ChatFormatting.GRAY));
-        tooltip.add(information);
-
-        // Get data for health, jump, and speed.
-        List<Value> values = Arrays.asList(attributes.getHealth(), attributes.getSpeed(), attributes.getJump());
-
-        for (Value v : values)
-        {
-            if (v.getValue() != 0)
-            {
-                // Shows "-" if negative but this adds "+" if positive.
-                String modifier = v.getValue() > 0 ? "+" : "";
-
-                // Add all data with style.
-                TextComponent text = new TextComponent(modifier + v.getValue() + "% " + I18n.get("tooltip.hitchhike." + v.getName()));
-                text.setStyle(Style.EMPTY.applyFormat(ChatFormatting.BLUE));
-
-                // Add it to tooltip
-                tooltip.add(text);
-            }
-        }
     }
 
     /* Release on ground */

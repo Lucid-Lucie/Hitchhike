@@ -109,5 +109,6 @@ public class UtilPouch
     {
         pouch.setDamageValue(old.getDamageValue());
         EnchantmentHelper.setEnchantments(EnchantmentHelper.getEnchantments(old), pouch);
+        pouch.getOrCreateTag().putInt("RepairCost", old.getOrCreateTag().getInt("RepairCost"));
     }
 }
