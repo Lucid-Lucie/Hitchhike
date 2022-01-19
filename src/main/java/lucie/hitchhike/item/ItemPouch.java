@@ -71,6 +71,12 @@ public class ItemPouch extends Item
 
     public static void create(Horse horse, Player player, InteractionHand hand)
     {
+        // Remove leash.
+        if (horse.isLeashed())
+        {
+            horse.dropLeash(true, true);
+        }
+
         // Create Horse Pouch.
         ItemStack pouch = new ItemStack(ItemAlias.POUCH_WITH_HORSE);
         pouch.setTag(new CompoundTag());
@@ -95,12 +101,6 @@ public class ItemPouch extends Item
         player.getCooldowns().addCooldown(ItemAlias.POUCH, 20);
         player.getCooldowns().addCooldown(ItemAlias.POUCH_WITH_HORSE, 20);
 
-        // Remove leash.
-        if (horse.isLeashed())
-        {
-            horse.dropLeash(true, true);
-        }
-
         // Remove entity.
         horse.discard();
 
@@ -109,6 +109,7 @@ public class ItemPouch extends Item
         {
             // Sound
             player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
+            player.playSound(SoundEvents.CHORUS_FRUIT_TELEPORT, 1.0F, 1.0F);
 
             // Poof
             UtilParticle.spawnPoofParticles(horse);

@@ -199,6 +199,7 @@ public class ItemHorse extends Item
         {
             // Sound
             player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
+            player.playSound(SoundEvents.ENDER_EYE_DEATH, 1.0F, 1.0F);
 
             // Poof
             UtilParticle.spawnPoofParticles(horse);

@@ -5,7 +5,7 @@ logoFile="hitchhike.png"
 
 [[mods]]
 modId="hitchhike"
-version="1.1"
+version="1.2"
 displayName="Hitchhike"
 displayURL="https://github.com/Lucid-Lucie/Hitchhike"
 credits="Thanks for everything Otto!"

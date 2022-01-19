@@ -6,13 +6,13 @@
     ]
   },
   "criteria": {
-    "has_leather": {
+    "has_ender_pearl": {
       "trigger": "minecraft:inventory_changed",
       "conditions": {
         "items": [
           {
             "items": [
-              "minecraft:leather"
+              "minecraft:ender_pearl"
             ]
           }
         ]
@@ -27,7 +27,7 @@
   },
   "requirements": [
     [
-      "has_leather",
+      "has_ender_pearl",
       "has_the_recipe"
     ]
   ]
