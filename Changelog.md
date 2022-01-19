@@ -12,4 +12,4 @@
 
 * Fixed leash duplication bug.
 * Changed pouch recipe and themes using ender pearls and teleportation. 
-
+* Pouches have durability now.

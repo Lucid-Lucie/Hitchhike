@@ -3,37 +3,34 @@ package lucie.hitchhike.item;
 import lucie.hitchhike.Hitchhike;
 import lucie.hitchhike.util.UtilAttributes;
 import lucie.hitchhike.util.UtilAttributes.Value;
-import lucie.hitchhike.util.UtilParticle;
+import lucie.hitchhike.util.UtilPouch;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.animal.horse.Horse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class ItemHorse extends Item
 {
     public ItemHorse()
     {
-        super(new Item.Properties().stacksTo(1));
+        super(new Item.Properties().stacksTo(1).durability(256));
         this.setRegistryName("pouch_with_horse");
     }
 
@@ -60,6 +57,8 @@ public class ItemHorse extends Item
     @Override
     public void appendHoverText(@Nonnull ItemStack stack, @Nullable Level level, @Nonnull List<Component> tooltip, @Nonnull TooltipFlag flag)
     {
+        super.appendHoverText(stack, level, tooltip, flag);
+
         // This means the item has been spawned in without data.
         if (stack.getTag() == null || !stack.getTag().contains("Content"))
         {
@@ -102,7 +101,6 @@ public class ItemHorse extends Item
                 // Add it to tooltip
                 tooltip.add(text);
             }
-
         }
     }
 
@@ -112,20 +110,13 @@ public class ItemHorse extends Item
     @Nonnull
     public InteractionResult useOn(@Nonnull UseOnContext context)
     {
-        // Check if horse can spawn.
-        if (context.getPlayer() == null || context.getPlayer().getCooldowns().isOnCooldown(this)) return InteractionResult.FAIL;
+        // Check for cooldown and data.
+        if (!check(context.getPlayer(), context.getItemInHand())) return InteractionResult.FAIL;
 
-        // Check for content.
-        if (!context.getItemInHand().getOrCreateTag().contains("Content"))
-        {
-            Hitchhike.LOGGER.warn("No data found in item, item probably spawned in without needed data. Ignoring to spawn.");
-            return InteractionResult.FAIL;
-        }
+        // Release.
+        context.getPlayer().setItemInHand(context.getHand(), UtilPouch.release(Objects.requireNonNull(EntityType.HORSE.create(context.getLevel())), context.getPlayer(), context.getHand(), context.getClickLocation(), false));
 
-        // Create Horse
-        create(context.getPlayer(), context.getLevel(), context.getClickLocation(), context.getItemInHand(), context.getHand());
-
-        return InteractionResult.SUCCESS;
+        return InteractionResult.CONSUME;
     }
 
     /* Release riding */
@@ -134,77 +125,27 @@ public class ItemHorse extends Item
     @Nonnull
     public InteractionResultHolder<ItemStack> use(@Nonnull Level level, @Nonnull Player player, @Nonnull InteractionHand hand)
     {
-        // Check for cooldown.
-        if (player.getCooldowns().isOnCooldown(this)) return new InteractionResultHolder<>(InteractionResult.FAIL, player.getItemInHand(hand));
+        // Check for cooldown and data.
+        if (!check(player, player.getItemInHand(hand))) return new InteractionResultHolder<>(InteractionResult.FAIL, player.getItemInHand(hand));
 
-        // Check for content.
-        if (!player.getItemInHand(hand).getOrCreateTag().contains("Content"))
-        {
-            Hitchhike.LOGGER.warn("No data found in item, item probably spawned in without needed data. Ignoring to spawn.");
-            return new InteractionResultHolder<>(InteractionResult.FAIL, player.getItemInHand(hand));
-        }
-
-        // Create Horse
-        Horse entity = create(player, level, player.getPosition(0.0F), player.getItemInHand(hand), hand);
-
-        // Start riding entity.
-        if (entity != null) player.startRiding(entity);
-
-        return new InteractionResultHolder<>(InteractionResult.SUCCESS, player.getItemInHand(hand));
+        // Release.
+        return new InteractionResultHolder<>(InteractionResult.SUCCESS, UtilPouch.release(Objects.requireNonNull(EntityType.HORSE.create(level)), player, hand, player.getPosition(0.0F), true));
     }
 
     /* Shared */
 
-    public static Horse create(Player player, Level level, Vec3 pos, ItemStack stack, InteractionHand hand)
+    private boolean check(Player player, ItemStack stack)
     {
-        // Set cooldown on pouch.
-        player.getCooldowns().addCooldown(ItemAlias.POUCH, 20);
-        player.getCooldowns().addCooldown(ItemAlias.POUCH_WITH_HORSE, 20);
+        // Check for cooldown.
+        if (player == null || player.getCooldowns().isOnCooldown(this)) return false;
 
-        // Create entity.
-        Horse horse = EntityType.HORSE.create(level);
-
-        // Check for null
-        if (horse == null)
+        // Check for content.
+        if (!stack.getOrCreateTag().contains("Content"))
         {
-            Hitchhike.LOGGER.error("Couldn't initialize horse!");
-            return null;
+            Hitchhike.LOGGER.warn("No data found in item, item probably spawned in without needed data. Ignoring to spawn.");
+            return false;
         }
 
-        // Add data from compound.
-        horse.readAdditionalSaveData(stack.getOrCreateTag().getCompound("Content"));
-
-        // Add pos and rot mimicking player.
-        horse.setPos(pos);
-        horse.setYHeadRot(player.getYHeadRot());
-        horse.setYBodyRot(player.getYHeadRot());
-        horse.setYRot(player.getYRot());
-        horse.setXRot(player.getXRot());
-
-        // Check and set custom name
-        if (stack.hasCustomHoverName()) horse.setCustomName(stack.getHoverName());
-
-        // Spawn entity.
-        level.addFreshEntity(horse);
-
-        // Create new pouch.
-        ItemStack pouch = new ItemStack(ItemAlias.POUCH);
-        pouch.setTag(new CompoundTag());
-
-        // Set new stack.
-        player.setItemInHand(hand, pouch);
-
-        // Sound and particles
-        if (level.isClientSide)
-        {
-            // Sound
-            player.playSound(SoundEvents.ARMOR_EQUIP_LEATHER, 1.0F, 1.0F);
-            player.playSound(SoundEvents.ENDER_EYE_DEATH, 1.0F, 1.0F);
-
-            // Poof
-            UtilParticle.spawnPoofParticles(horse);
-        }
-
-        return horse;
+        return true;
     }
 }
