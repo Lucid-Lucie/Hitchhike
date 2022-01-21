@@ -1,8 +1,9 @@
 {
   "item.hitchhike.pouch": "Empty Pouch",
   "item.hitchhike.pouch_with_horse": "Captured Horse",
+  "item.hitchhike.pouch_with_skeleton_horse": "Captured Skeleton Horse",
+  "item.hitchhike.pouch_with_zombie_horse": "Captured Zombie Horse",
 
-  "tooltip.hitchhike.information.health": "Health: %s/%s",
   "tooltip.hitchhike.information": "Information",
   "tooltip.hitchhike.health": "Health Points",
   "tooltip.hitchhike.jump": "Jump Strength",

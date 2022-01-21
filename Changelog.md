@@ -12,4 +12,5 @@
 
 * Fixed leash duplication bug.
 * Changed pouch recipe and themes using ender pearls and teleportation. 
-* Pouches have durability now.
+* Pouches have durability now. Unbreaking and Mending can be applied.
+* Zombie and Skeleton horses has been re-added. (*By minorm's request*)

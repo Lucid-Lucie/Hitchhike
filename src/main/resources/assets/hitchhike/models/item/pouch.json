@@ -2,7 +2,8 @@
 	"credit": "Modeled in Blockbench by Lucie",
 	"parent": "hitchhike:item/template_pouch_display",
 	"textures": {
-		"pouch": "hitchhike:item/pouch"
+		"pouch": "hitchhike:item/pouch",
+		"particle": "hitchhike:item/pouch"
 	},
 	"elements": [
 		{

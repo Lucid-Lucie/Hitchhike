@@ -1,8 +1,11 @@
 package lucie.hitchhike;
 
 import lucie.hitchhike.item.ItemAlias;
-import lucie.hitchhike.item.ItemHorse;
+import lucie.hitchhike.item.ItemContent;
 import lucie.hitchhike.item.ItemPouch;
+import lucie.hitchhike.item.content.ItemHorse;
+import lucie.hitchhike.item.content.ItemSkeletonHorse;
+import lucie.hitchhike.item.content.ItemZombieHorse;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -14,6 +17,10 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Mod(Hitchhike.MODID)
 public class Hitchhike
 {
@@ -22,6 +29,9 @@ public class Hitchhike
 
     // The mod logger.
     public static final Logger LOGGER = LogManager.getFormatterLogger("Hitchhike");
+
+    // List of all pouches with mobs.
+    public static final List<ItemContent> HORSES = Arrays.asList(ItemAlias.POUCH_WITH_HORSE, ItemAlias.POUCH_WITH_SKELETON_HORSE, ItemAlias.POUCH_WITH_ZOMBIE_HORSE);
 
     public Hitchhike()
     {
@@ -41,9 +51,13 @@ public class Hitchhike
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event)
         {
+            // Pouch.
             event.getRegistry().register(new ItemPouch());
 
+            // Pouch Content.
             event.getRegistry().register(new ItemHorse());
+            event.getRegistry().register(new ItemSkeletonHorse());
+            event.getRegistry().register(new ItemZombieHorse());
         }
     }
 }
