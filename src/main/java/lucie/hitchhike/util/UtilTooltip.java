@@ -2,11 +2,10 @@ package lucie.hitchhike.util;
 
 import com.mojang.datafixers.util.Pair;
 import lucie.hitchhike.Hitchhike;
-import lucie.hitchhike.item.ItemContent;
+import lucie.hitchhike.item.ItemHorse;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -14,7 +13,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 @Mod.EventBusSubscriber(modid = Hitchhike.MODID)
@@ -26,7 +24,7 @@ public class UtilTooltip
         // Get info tag if item has it.
         CompoundTag data = event.getItemStack().getTag() == null ? null : event.getItemStack().getTag().contains("Data") ? event.getItemStack().getTag().getCompound("Data") : null;
 
-        if (event.getItemStack().getItem() instanceof ItemContent)
+        if (event.getItemStack().getItem() instanceof ItemHorse)
         {
             int index = event.getItemStack().getEnchantmentTags().size() + 1;
 

@@ -11,6 +11,7 @@
 **Version 1.2**
 
 * Fixed leash duplication bug.
-* Changed pouch recipe and themes using ender pearls and teleportation. 
+* Changed pouch recipe to use ender pearls. 
 * Pouches have durability now. Unbreaking and Mending can be applied.
+* Pouches can be repaired with leather.
 * Zombie and Skeleton horses has been re-added. (*By minorm's request*)
