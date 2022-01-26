@@ -3,12 +3,12 @@ package lucie.hitchhike.item;
 import lucie.hitchhike.Hitchhike;
 import lucie.hitchhike.util.UtilPouch;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,7 +19,6 @@ import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
@@ -34,7 +33,7 @@ public class ItemHorse extends Item
 
     public ItemHorse(EntityType<?> horse)
     {
-        super(new Item.Properties().durability(256));
+        super(new Item.Properties().stacksTo(1));
         this.setRegistryName("pouch_with_" + Objects.requireNonNull(horse.getRegistryName()).getPath());
         this.horse = horse;
     }
@@ -42,12 +41,6 @@ public class ItemHorse extends Item
     public EntityType<?> getHorse()
     {
         return horse;
-    }
-
-    @Override
-    public boolean isValidRepairItem(@Nonnull ItemStack pouch, @Nonnull ItemStack ingredient)
-    {
-        return ingredient.getItem().equals(Items.LEATHER);
     }
 
     /* Conversion */
@@ -190,17 +183,9 @@ public class ItemHorse extends Item
         // Check and set custom name.
         if (stack.hasCustomHoverName()) horse.setCustomName(player.getItemInHand(hand).getHoverName());
 
-        // Remove and convert.
-        stack.getTag().remove("display");
-        stack.getTag().remove("Content");
-        stack.getTag().remove("Info");
-
         // Create new pouch.
         ItemStack pouch = new ItemStack(ItemAlias.POUCH);
-        pouch.setTag(stack.getTag());
-
-        // Damage pouch.
-        if (!player.level.isClientSide && !player.isCreative()) pouch.hurtAndBreak(1, (ServerPlayer) player, serverPlayer -> serverPlayer.broadcastBreakEvent(hand));
+        pouch.setTag(new CompoundTag());
 
         // Add cooldown.
         UtilPouch.addCooldown(player);

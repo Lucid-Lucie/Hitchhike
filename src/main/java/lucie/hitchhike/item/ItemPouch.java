@@ -11,7 +11,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nonnull;
@@ -23,14 +22,8 @@ public class ItemPouch extends Item
 {
     public ItemPouch()
     {
-        super(new Item.Properties().durability(256).tab(CreativeModeTab.TAB_TRANSPORTATION));
+        super(new Item.Properties().tab(CreativeModeTab.TAB_TRANSPORTATION).stacksTo(1));
         this.setRegistryName("pouch");
-    }
-
-    @Override
-    public boolean isValidRepairItem(@Nonnull ItemStack pouch, @Nonnull ItemStack ingredient)
-    {
-        return ingredient.getItem().equals(Items.LEATHER);
     }
 
     /* Use */
@@ -91,18 +84,9 @@ public class ItemPouch extends Item
             return new InteractionResultHolder<>(InteractionResult.FAIL, player.getItemInHand(hand));
         }
 
-        // Get pouch.
-        ItemStack stack = player.getItemInHand(hand);
-
-        // Check and create compound.
-        if (stack.getTag() == null) stack.setTag(new CompoundTag());
-
-        // Remove data.
-        stack.getTag().remove("display");
-
         // Create horse pouch.
         ItemStack pouch = new ItemStack(item);
-        pouch.setTag(stack.getTag());
+        pouch.setTag(new CompoundTag());
 
         // Content compound.
         CompoundTag content = new CompoundTag();
