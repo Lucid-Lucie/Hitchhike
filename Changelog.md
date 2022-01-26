@@ -15,3 +15,4 @@
 * Pouches have durability now. Unbreaking and Mending can be applied.
 * Pouches can be repaired with leather.
 * Zombie and Skeleton horses has been re-added. (*By minorm's request*)
+* Zombies can now turn horses into zombie horses if the have strength effect.

@@ -65,7 +65,7 @@ public class ItemPouch extends Item
 
     /* Capture */
 
-    private InteractionResultHolder<ItemStack> capture(Player player, InteractionHand hand, LivingEntity entity)
+    public static InteractionResultHolder<ItemStack> capture(Player player, InteractionHand hand, LivingEntity entity)
     {
         // Check for cooldown.
         if (UtilPouch.isCooldown(player))

@@ -2,11 +2,19 @@ package lucie.hitchhike.item;
 
 import lucie.hitchhike.Hitchhike;
 import lucie.hitchhike.util.UtilPouch;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.effect.MobEffect;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -40,6 +48,73 @@ public class ItemHorse extends Item
     public boolean isValidRepairItem(@Nonnull ItemStack pouch, @Nonnull ItemStack ingredient)
     {
         return ingredient.getItem().equals(Items.LEATHER);
+    }
+
+    /* Conversion */
+
+    @Override
+    @Nonnull
+    public InteractionResult interactLivingEntity(@Nonnull ItemStack stack, @Nonnull Player player, @Nonnull LivingEntity entity, @Nonnull InteractionHand hand)
+    {
+        // Check for pouch being 'pouch_with_horse' and a zombie with with a free main hand.
+        if (!stack.getItem().equals(ItemAlias.POUCH_WITH_HORSE) || !entity.getType().equals(EntityType.ZOMBIE) || !entity.getItemInHand(InteractionHand.MAIN_HAND).isEmpty() || !entity.hasEffect(MobEffects.DAMAGE_BOOST)) return super.interactLivingEntity(stack, player, entity, hand);
+
+        // Create a zombie horse.
+        AbstractHorse horse = EntityType.ZOMBIE_HORSE.create(player.level);
+
+        // Check if horse was created correctly.
+        if (horse == null)
+        {
+            Hitchhike.LOGGER.error("Couldn't initialize Zombie Horse!");
+            return InteractionResult.FAIL;
+        }
+
+        // Check for Data
+        if (stack.getTag() == null || !stack.getTag().contains("Data"))
+        {
+            Hitchhike.LOGGER.error("Couldn't fetch data!");
+            return InteractionResult.FAIL;
+        }
+
+        // Convert horse to zombie.
+        Objects.requireNonNull(horse.getAttribute(Attributes.MAX_HEALTH)).setBaseValue(stack.getTag().getCompound("Data").getFloat("health"));
+        Objects.requireNonNull(horse.getAttribute(Attributes.JUMP_STRENGTH)).setBaseValue(stack.getTag().getCompound("Data").getFloat("jump"));
+        Objects.requireNonNull(horse.getAttribute(Attributes.MOVEMENT_SPEED)).setBaseValue(stack.getTag().getCompound("Data").getFloat("speed"));
+        horse.equipSaddle(null);
+        horse.setTamed(true);
+        horse.setHealth(stack.getTag().getCompound("Data").getFloat("health"));
+
+        // Capture new entity.
+        InteractionResultHolder<ItemStack> result = ItemPouch.capture(player, hand, horse);
+        if (!result.getResult().equals(InteractionResult.SUCCESS)) return InteractionResult.FAIL;
+
+        // Give pouch to Zombie.
+        entity.setItemInHand(InteractionHand.MAIN_HAND, result.getObject());
+
+        // Give 100% drop chance for pouch.
+        ((Mob)entity).setGuaranteedDrop(EquipmentSlot.MAINHAND);
+
+        // Remove pouch.
+        player.setItemInHand(hand, ItemStack.EMPTY);
+
+        // Sound and particles.
+        if (player.level.isClientSide)
+        {
+            // Play infect sound.
+            player.playSound(SoundEvents.ZOMBIE_INFECT, 1.0F, 1.0F);
+
+            // Spawn smoke particles.
+            for(int i = 0; i < 15; ++i)
+            {
+                double x = entity.getRandom().nextGaussian() * 0.02D;
+                double y = entity.getRandom().nextGaussian() * 0.02D;
+                double z = entity.getRandom().nextGaussian() * 0.02D;
+
+                entity.level.addParticle(ParticleTypes.SMOKE, entity.getRandomX(1.0D), entity.getRandomY()  + 0.2, entity.getRandomZ(1.0D), x, y, z);
+            }
+        }
+
+        return InteractionResult.SUCCESS;
     }
 
     /* Use */
